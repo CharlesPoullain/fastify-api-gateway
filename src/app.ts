@@ -1,7 +1,8 @@
 import fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
 import fastifyCors from "@fastify/cors";
 import fastifyHelmet from "@fastify/helmet";
-import routes from "./routes";
+import path from "path";
+import AutoLoad from "@fastify/autoload";
 
 const createServer = (options?: FastifyServerOptions): FastifyInstance => {
   const server = fastify(options);
@@ -9,7 +10,10 @@ const createServer = (options?: FastifyServerOptions): FastifyInstance => {
   server.register(fastifyCors);
   server.register(fastifyHelmet);
 
-  server.register(routes);
+  server.register(AutoLoad, {
+    dir: path.join(__dirname, "routes"),
+    options: { prefix: "/" },
+  });
 
   return server;
 };
