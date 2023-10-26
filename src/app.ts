@@ -8,6 +8,8 @@ import errorHandler from "./middleware/errorHandler";
 const createServer = (options?: FastifyServerOptions): FastifyInstance => {
   const server = fastify(options);
 
+  server.setErrorHandler(errorHandler);
+
   server.register(fastifyCors);
   server.register(fastifyHelmet);
 
@@ -15,8 +17,6 @@ const createServer = (options?: FastifyServerOptions): FastifyInstance => {
     dir: path.join(__dirname, "routes"),
     options: { prefix: "/" },
   });
-
-  server.register(errorHandler);
 
   return server;
 };

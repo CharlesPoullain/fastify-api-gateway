@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { CustomError } from "../errors/CustomError";
 
 class HttpService {
   private static instance: HttpService;
@@ -27,12 +28,10 @@ class HttpService {
       const response = await this.axiosInstance.get(url, config);
       return response;
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to fetch data from ${url}: ${error.message}`);
-      } else {
-        // Vous pouvez choisir de lancer une nouvelle erreur ou de gérer l'erreur différemment
-        throw new Error(`Failed to fetch data from ${url}`);
-      }
+      throw new CustomError(
+        "EXTERNAL_SERVICE_ERROR",
+        `Failed to fetch data from ${url}: ${(error as Error).message}`
+      );
     }
   }
 }
