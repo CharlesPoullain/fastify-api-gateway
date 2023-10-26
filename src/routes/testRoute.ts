@@ -1,19 +1,11 @@
 import { FastifyInstance } from "fastify";
-import HttpClient from "../services/HttpClient";
+import HttpService from "../services/HttpService";
 
 const testRoute = async (fastify: FastifyInstance): Promise<void> => {
   fastify.get("/test", async (request, reply) => {
-    try {
-      const httpClient = HttpClient.getInstance();
-      const response = await httpClient.get("https://dummyjson.com/products");
-
-      return reply.send(response.data);
-    } catch (error) {
-      fastify.log.error(error);
-      return reply
-        .status(500)
-        .send({ error: "Failed to fetch data from microservice" });
-    }
+    const httpService = HttpService.getInstance();
+    const response = await httpService.get("https://dummyjson.com/productss");
+    return reply.send(response.data);
   });
 };
 
