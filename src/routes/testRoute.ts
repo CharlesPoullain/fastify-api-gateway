@@ -1,11 +1,13 @@
 import { FastifyInstance } from "fastify";
-import HttpService from "../services/HttpService";
-import { CustomError } from "../errors/CustomError";
+import ServiceFactory from "../services/ServiceFactory";
+import { servicesConfig } from "../config/servicesConfig";
 
 const testRoute = async (fastify: FastifyInstance): Promise<void> => {
   fastify.get("/test", async (request, reply) => {
-    const httpService = HttpService.getInstance();
-    const response = await httpService.get("https://dummyjson.com/products");
+    const service = ServiceFactory.getService("dummyService");
+    const response = await service.get(
+      servicesConfig.dummyService.endpoints.getAllProducts
+    );
     return reply.send(response.data);
   });
 };
