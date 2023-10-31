@@ -2,22 +2,16 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { CustomError } from "../errors/CustomError";
 
 class HttpService {
-  private static instance: HttpService;
   private axiosInstance: AxiosInstance;
 
-  private constructor() {
-    this.axiosInstance = axios.create();
-  }
-
-  public static getInstance(): HttpService {
-    if (!HttpService.instance) {
-      HttpService.instance = new HttpService();
-    }
-    return HttpService.instance;
+  constructor(baseUrl: string) {
+    this.axiosInstance = axios.create({
+      baseURL: baseUrl,
+    });
   }
 
   public async get(
-    url: string,
+    endpoint: string,
     headers?: Record<string, string>
   ): Promise<AxiosResponse> {
     const config: AxiosRequestConfig = {};
@@ -25,12 +19,12 @@ class HttpService {
       config.headers = headers;
     }
     try {
-      const response = await this.axiosInstance.get(url, config);
+      const response = await this.axiosInstance.get(endpoint, config);
       return response;
     } catch (error: unknown) {
       throw new CustomError(
         "EXTERNAL_SERVICE_ERROR",
-        `Failed to fetch data from ${url}: ${(error as Error).message}`
+        `Failed to fetch data from ${endpoint}: ${(error as Error).message}`
       );
     }
   }

@@ -1,18 +1,20 @@
 import { servicesConfig } from "../config/servicesConfig";
-import axios, { AxiosInstance } from "axios";
+import { generateMethods } from "../utils/generateMethods";
+import HttpService from "./HttpService";
+import ServiceMethods from "../types/ServiceInterface";
 
 class ServiceFactory {
-  private static instances: Record<string, AxiosInstance> = {};
+  private static instances: Record<string, ServiceMethods> = {};
 
-  public static getService(serviceName: string): AxiosInstance {
+  public static getService(serviceName: string): ServiceMethods {
     if (!ServiceFactory.instances[serviceName]) {
       const serviceConfig = servicesConfig[serviceName];
       if (!serviceConfig) {
         throw new Error(`Service ${serviceName} not found`);
       }
-      ServiceFactory.instances[serviceName] = axios.create({
-        baseURL: serviceConfig.baseUrl,
-      });
+      const httpService = new HttpService(serviceConfig.baseUrl);
+      const methods = generateMethods(httpService, serviceConfig.endpoints);
+      ServiceFactory.instances[serviceName] = methods;
     }
     return ServiceFactory.instances[serviceName];
   }
